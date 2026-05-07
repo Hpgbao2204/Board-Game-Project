@@ -14,6 +14,8 @@ export function handleClientEvent(
   registry: ConnectionRegistry,
   event: ClientEvent
 ): void {
+  console.info(`[event] ${event.type} connection=${connection.id}`);
+
   switch (event.type) {
     case "create_room":
       handleCreateRoom(connection, registry, event);
@@ -85,6 +87,7 @@ function handleCreateRoom(
   }
 
   registry.bindPlayer(connection, result.room.room.code, result.playerId);
+  console.info(`[room] created code=${result.room.room.code} host=${result.playerId}`);
   sendRoomSnapshot(registry, connection, result.playerId);
 }
 
@@ -101,6 +104,7 @@ function handleJoinRoom(
   }
 
   registry.bindPlayer(connection, result.room.room.code, result.playerId);
+  console.info(`[room] joined code=${result.room.room.code} player=${result.playerId}`);
   registry.broadcast(result.room.room.code, {
     type: "player_reconnected",
     payload: {
@@ -124,6 +128,7 @@ function handleLeaveRoom(
   }
 
   if (result.room) {
+    console.info(`[room] left code=${event.payload.roomCode} player=${event.payload.playerId}`);
     broadcastRoomSnapshot(registry, event.payload.roomCode);
   }
 
@@ -145,6 +150,7 @@ function handleStartGame(
 
   broadcastRoomSnapshot(registry, event.payload.roomCode);
   broadcastGameSnapshots(registry, event.payload.roomCode);
+  console.info(`[game] started room=${event.payload.roomCode}`);
 }
 
 function handleSubmitMove(
@@ -164,6 +170,9 @@ function handleSubmitMove(
   }
 
   if (result.ok) {
+    console.info(
+      `[game] move applied room=${event.payload.roomCode} player=${event.payload.playerId} move=${event.payload.moveId}`
+    );
     broadcastRoomSnapshot(registry, event.payload.roomCode);
     broadcastGameSnapshots(registry, event.payload.roomCode);
   }

@@ -15,6 +15,7 @@ export function startWebSocketServer(options: WebSocketServerOptions): WebSocket
 
   server.on("connection", (socket) => {
     const connection = registry.add(socket);
+    console.info(`[ws] connected ${connection.id}`);
 
     socket.send(
       JSON.stringify({
@@ -43,6 +44,7 @@ export function startWebSocketServer(options: WebSocketServerOptions): WebSocket
     socket.on("close", () => {
       handleDisconnect(connection, registry);
       registry.remove(connection.id);
+      console.info(`[ws] disconnected ${connection.id}`);
     });
   });
 

@@ -16,10 +16,16 @@ export function useGameSocket(url = DEFAULT_WS_URL) {
     setConnectionStatus("connecting");
 
     socket.addEventListener("open", () => {
-      setConnectionStatus("connected");
+      if (socketRef.current === socket) {
+        setConnectionStatus("connected");
+      }
     });
 
     socket.addEventListener("message", (message) => {
+      if (socketRef.current !== socket) {
+        return;
+      }
+
       try {
         const event = JSON.parse(message.data) as ServerEvent;
         setEvents((currentEvents) => [...currentEvents, event]);
@@ -38,16 +44,23 @@ export function useGameSocket(url = DEFAULT_WS_URL) {
     });
 
     socket.addEventListener("close", () => {
-      setConnectionStatus("disconnected");
+      if (socketRef.current === socket) {
+        setConnectionStatus("disconnected");
+      }
     });
 
     socket.addEventListener("error", () => {
-      setConnectionStatus("disconnected");
+      if (socketRef.current === socket) {
+        setConnectionStatus("disconnected");
+      }
     });
 
     return () => {
+      if (socketRef.current === socket) {
+        socketRef.current = null;
+      }
+
       socket.close();
-      socketRef.current = null;
     };
   }, [url]);
 
