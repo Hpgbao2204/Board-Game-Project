@@ -1,0 +1,22 @@
+{
+  "name": "board-game-hub",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w @board-game-hub/web",
+    "dev:server": "npm run dev -w @board-game-hub/server",
+    "build": "tsc -b packages/shared packages/games apps/server apps/web && npm run build -w @board-game-hub/web",
+    "typecheck": "tsc -b packages/shared packages/games apps/server apps/web --pretty false"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

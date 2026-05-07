@@ -1,0 +1,1 @@
+export const registeredGameModuleIds: string[] = [];
