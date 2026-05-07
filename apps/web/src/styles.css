@@ -126,6 +126,13 @@ label {
   max-width: 620px;
 }
 
+.game-layout {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(260px, 360px) minmax(320px, 1fr);
+  align-items: start;
+}
+
 .room-heading {
   display: flex;
   align-items: flex-start;
@@ -181,6 +188,64 @@ label {
   font-weight: 700;
 }
 
+.game-panel {
+  gap: 20px;
+}
+
+.game-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.player-mark {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 8px;
+  background: #e7ecf8;
+  color: #2357d9;
+  font-size: 1.25rem;
+}
+
+.tic-tac-toe-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: min(100%, 390px);
+}
+
+.tic-tac-toe-cell {
+  aspect-ratio: 1;
+  min-height: 0;
+  border: 1px solid #cbd5e6;
+  background: #f8fafd;
+  color: #18202f;
+  font-size: 3rem;
+  font-weight: 900;
+}
+
+.tic-tac-toe-cell:disabled {
+  background: #f8fafd;
+  color: #18202f;
+}
+
+.tic-tac-toe-cell:not(:disabled):hover {
+  background: #eaf0ff;
+}
+
+.tic-tac-toe-cell.is-winning {
+  border-color: #22a35a;
+  background: #dff7e7;
+}
+
+.game-message {
+  margin: 0;
+  color: #33415c;
+  font-weight: 800;
+}
+
 @media (max-width: 720px) {
   .app-header,
   .room-heading {
@@ -189,6 +254,11 @@ label {
   }
 
   .lobby-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .game-layout,
+  .game-summary {
     grid-template-columns: 1fr;
   }
 }

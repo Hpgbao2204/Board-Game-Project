@@ -32,6 +32,9 @@ export function handleClientEvent(
     case "submit_move":
       handleSubmitMove(connection, registry, event);
       return;
+    case "make_move":
+      handleSubmitMove(connection, registry, event);
+      return;
     case "request_sync":
       handleRequestSync(connection, registry, event);
       return;
@@ -156,7 +159,7 @@ function handleStartGame(
 function handleSubmitMove(
   connection: ClientConnection,
   registry: ConnectionRegistry,
-  event: Extract<ClientEvent, { type: "submit_move" }>
+  event: Extract<ClientEvent, { type: "submit_move" | "make_move" }>
 ): void {
   const result = gameRuntime.submitMove(event.payload);
 

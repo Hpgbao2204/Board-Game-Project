@@ -42,6 +42,15 @@ export type ClientEvent =
       };
     }
   | {
+      type: "make_move";
+      payload: {
+        roomCode: RoomCode;
+        playerId: PlayerId;
+        moveId: MoveId;
+        move: unknown;
+      };
+    }
+  | {
       type: "request_sync";
       payload: {
         roomCode: RoomCode;
