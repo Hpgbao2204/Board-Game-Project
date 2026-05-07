@@ -1,24 +1,13 @@
 import { useMemo, useState } from "react";
-import type { PlayerId, RoomSnapshot, ServerEvent } from "@board-game-hub/shared";
+import { GAME_CATALOG } from "@board-game-hub/shared";
+import type { GameId, PlayerId, RoomSnapshot, ServerEvent } from "@board-game-hub/shared";
+import { GameRenderer } from "./games/GameRenderer";
 import { useGameSocket } from "./lib/realtime/useGameSocket";
-
-const MVP_GAME_ID = "tic-tac-toe";
-
-type TicTacToeMark = "X" | "O";
-type TicTacToeCell = TicTacToeMark | null;
-
-interface TicTacToePublicState {
-  board: TicTacToeCell[];
-  playerMarks: Record<PlayerId, TicTacToeMark>;
-  currentPlayerId: PlayerId;
-  winnerPlayerId: PlayerId | null;
-  winningLine: number[] | null;
-  isDraw: boolean;
-}
 
 export function App() {
   const { connectionStatus, events, sendEvent } = useGameSocket();
   const [createName, setCreateName] = useState("");
+  const [selectedGameId, setSelectedGameId] = useState<GameId>(GAME_CATALOG[0].id);
   const [joinName, setJoinName] = useState("");
   const [joinCode, setJoinCode] = useState("");
 
@@ -27,7 +16,8 @@ export function App() {
   const latestError = useMemo(() => getLatestError(events), [events]);
   const viewerId = latestRoomSnapshot?.viewerId;
   const room = latestRoomSnapshot?.room;
-  const gameState = latestGameSnapshot?.state as TicTacToePublicState | undefined;
+  const selectedGame = GAME_CATALOG.find((game) => game.id === selectedGameId) ?? GAME_CATALOG[0];
+  const gameState = latestGameSnapshot?.state;
   const isHost = Boolean(room && viewerId && room.hostId === viewerId);
   const canStartGame = Boolean(isHost && room && room.players.length >= 2 && room.status === "lobby");
 
@@ -37,12 +27,12 @@ export function App() {
       type: "create_room",
       payload: {
         displayName: createName,
-        gameId: MVP_GAME_ID
+        gameId: selectedGameId
       }
     });
   }
 
-  function handleCellClick(cellIndex: number) {
+  function handleMove(move: unknown) {
     if (!room || !viewerId || !gameState) {
       return;
     }
@@ -53,9 +43,7 @@ export function App() {
         roomCode: room.code,
         playerId: viewerId,
         moveId: crypto.randomUUID(),
-        move: {
-          cellIndex
-        }
+        move
       }
     });
   }
@@ -90,7 +78,7 @@ export function App() {
       <section className="app-header">
         <div>
           <h1>Board Game Hub</h1>
-          <p>Tic Tac Toe MVP</p>
+          <p>Pick a game, create a room, invite friends.</p>
         </div>
         <span className={`connection-badge connection-badge--${connectionStatus}`}>
           {connectionStatus}
@@ -108,9 +96,10 @@ export function App() {
           />
 
           {gameState ? (
-            <TicTacToeBoard
+            <GameRenderer
               currentPlayerId={latestGameSnapshot?.currentPlayerId ?? null}
-              onCellClick={handleCellClick}
+              gameId={room.settings.gameId}
+              onMove={handleMove}
               room={room}
               state={gameState}
               viewerId={viewerId}
@@ -119,8 +108,9 @@ export function App() {
         </section>
       ) : (
         <section className="lobby-grid">
-          <form className="panel" onSubmit={handleCreateRoom}>
+          <form className="panel create-room-panel" onSubmit={handleCreateRoom}>
             <h2>Create Room</h2>
+            <GameCatalog selectedGameId={selectedGameId} onSelectGame={setSelectedGameId} />
             <label>
               Display name
               <input
@@ -132,7 +122,7 @@ export function App() {
               />
             </label>
             <button disabled={connectionStatus !== "connected"} type="submit">
-              Create
+              Create {selectedGame.name} Room
             </button>
           </form>
 
@@ -170,67 +160,36 @@ export function App() {
   );
 }
 
-interface TicTacToeBoardProps {
-  currentPlayerId: PlayerId | null;
-  onCellClick: (cellIndex: number) => void;
-  room: RoomSnapshot;
-  state: TicTacToePublicState;
-  viewerId: PlayerId;
+interface GameCatalogProps {
+  onSelectGame: (gameId: GameId) => void;
+  selectedGameId: GameId;
 }
 
-function TicTacToeBoard({
-  currentPlayerId,
-  onCellClick,
-  room,
-  state,
-  viewerId
-}: TicTacToeBoardProps) {
-  const currentPlayer = room.players.find((player) => player.id === currentPlayerId);
-  const winner = state.winnerPlayerId
-    ? room.players.find((player) => player.id === state.winnerPlayerId)
-    : null;
-  const viewerMark = state.playerMarks[viewerId];
-  const isViewerTurn = currentPlayerId === viewerId;
-  const isGameOver = Boolean(state.winnerPlayerId || state.isDraw);
-
+function GameCatalog({ onSelectGame, selectedGameId }: GameCatalogProps) {
   return (
-    <section className="panel game-panel">
-      <div className="game-summary">
-        <div>
-          <p className="eyebrow">Your Symbol</p>
-          <strong className="player-mark">{viewerMark}</strong>
-        </div>
-        <div>
-          <p className="eyebrow">Current Turn</p>
-          <strong>{currentPlayer ? currentPlayer.displayName : "Game over"}</strong>
-        </div>
-      </div>
-
-      <div className="tic-tac-toe-board" role="grid" aria-label="Tic Tac Toe board">
-        {state.board.map((cell, index) => (
-          <button
-            aria-label={`Cell ${index + 1}`}
-            className={`tic-tac-toe-cell ${state.winningLine?.includes(index) ? "is-winning" : ""}`}
-            disabled={Boolean(cell) || !isViewerTurn || isGameOver}
-            key={index}
-            onClick={() => onCellClick(index)}
-            type="button"
-          >
-            {cell}
-          </button>
-        ))}
-      </div>
-
-      <p className="game-message">
-        {winner
-          ? `${winner.displayName} wins.`
-          : state.isDraw
-            ? "Draw."
-            : isViewerTurn
-              ? "Your turn."
-              : "Waiting for the other player."}
-      </p>
-    </section>
+    <fieldset className="game-catalog">
+      <legend>Game Catalog</legend>
+      {GAME_CATALOG.map((game) => (
+        <label
+          className={`game-card ${selectedGameId === game.id ? "is-selected" : ""}`}
+          key={game.id}
+        >
+          <input
+            checked={selectedGameId === game.id}
+            name="game"
+            onChange={() => onSelectGame(game.id)}
+            type="radio"
+          />
+          <span>
+            <strong>{game.name}</strong>
+            <small>
+              {game.minPlayers}-{game.maxPlayers} players
+            </small>
+            <small>{game.description}</small>
+          </span>
+        </label>
+      ))}
+    </fieldset>
   );
 }
 
@@ -255,6 +214,7 @@ function RoomWaitingArea({
         <div>
           <p className="eyebrow">Room Code</p>
           <h2>{room.code}</h2>
+          <p className="muted">Game: {getGameName(room.settings.gameId)}</p>
         </div>
         <span className="room-status">{room.status}</span>
       </div>
@@ -283,6 +243,10 @@ function RoomWaitingArea({
       )}
     </section>
   );
+}
+
+function getGameName(gameId: string) {
+  return GAME_CATALOG.find((game) => game.id === gameId)?.name ?? gameId;
 }
 
 function getLatestRoomSnapshot(events: ServerEvent[]) {
