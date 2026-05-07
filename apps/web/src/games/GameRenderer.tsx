@@ -1,4 +1,8 @@
 import type { PlayerId, RoomSnapshot } from "@board-game-hub/shared";
+import {
+  RoyalMessengerBoard,
+  type RoyalMessengerPublicState
+} from "./royal-messenger/RoyalMessengerBoard";
 import { TicTacToeBoard, type TicTacToePublicState } from "./tic-tac-toe/TicTacToeBoard";
 
 interface GameRendererProps {
@@ -25,6 +29,18 @@ export function GameRenderer({
         onMove={onMove}
         room={room}
         state={state as TicTacToePublicState}
+        viewerId={viewerId}
+      />
+    );
+  }
+
+  if (gameId === "royal-messenger") {
+    return (
+      <RoyalMessengerBoard
+        currentPlayerId={currentPlayerId}
+        onMove={onMove}
+        room={room}
+        state={state as RoyalMessengerPublicState}
         viewerId={viewerId}
       />
     );

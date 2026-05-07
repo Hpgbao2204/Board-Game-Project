@@ -20,11 +20,21 @@ import type { GameId, PlayerId, RoomSnapshot, ServerEvent } from "@board-game-hu
 import { GameRenderer } from "./games/GameRenderer";
 import { useGameSocket } from "./lib/realtime/useGameSocket";
 
-const catalogDetails: Record<string, { cover: string; complexity: string; playtime: string }> = {
+const catalogDetails: Record<
+  string,
+  { cover: string; complexity: string; playtime: string; mark: string }
+> = {
   "tic-tac-toe": {
     cover: "from-cyan-400 via-blue-500 to-indigo-700",
     complexity: "Easy",
-    playtime: "3 min"
+    playtime: "3 min",
+    mark: "XO"
+  },
+  "royal-messenger": {
+    cover: "from-amber-300 via-rose-500 to-purple-800",
+    complexity: "Medium",
+    playtime: "8 min",
+    mark: "♛"
   }
 };
 
@@ -407,7 +417,8 @@ function GameCatalogCard({
   const details = catalogDetails[game.id] ?? {
     cover: "from-slate-500 to-slate-800",
     complexity: "Unknown",
-    playtime: "Varies"
+    playtime: "Varies",
+    mark: "?"
   };
 
   return (
@@ -425,7 +436,7 @@ function GameCatalogCard({
           <span className="rounded-full bg-black/25 px-3 py-1 text-xs font-black">{details.complexity}</span>
           <Trophy size={22} />
         </div>
-        <div className="mt-9 text-5xl font-black opacity-90">XO</div>
+        <div className="mt-9 text-5xl font-black opacity-90">{details.mark}</div>
       </div>
       <div className="grid gap-3 p-4">
         <div>
