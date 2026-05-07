@@ -17,9 +17,6 @@
     "paths": {
       "@board-game-hub/shared": [
         "packages/shared/src/index.ts"
-      ],
-      "@board-game-hub/games": [
-        "packages/games/src/index.ts"
       ]
     }
   }

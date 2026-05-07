@@ -10,6 +10,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@board-game-hub/games": "0.1.0",
     "@board-game-hub/shared": "0.1.0",
     "ws": "^8.18.0"
   },
