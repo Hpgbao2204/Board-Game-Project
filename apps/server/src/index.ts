@@ -1,10 +1,7 @@
-import type { ServerEvent } from "@board-game-hub/shared";
+import { startWebSocketServer } from "./realtime/websocketServer";
 
-const bootEvent: ServerEvent = {
-  type: "server_ready",
-  payload: {
-    service: "board-game-hub-server"
-  }
-};
+const port = Number(process.env.PORT ?? 8787);
 
-console.log(JSON.stringify(bootEvent));
+startWebSocketServer({
+  port
+});

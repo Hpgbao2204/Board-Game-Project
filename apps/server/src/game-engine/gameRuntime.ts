@@ -79,8 +79,7 @@ export class GameRuntime {
             moveId: input.moveId,
             events: moveResult.events
           }
-        },
-        this.createGameSnapshot(updated, input.playerId)
+        }
       ]
     };
   }
