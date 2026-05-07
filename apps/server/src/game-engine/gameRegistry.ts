@@ -1,7 +1,8 @@
 import type { GameModule } from "@board-game-hub/shared";
-import { ticTacToeGame } from "@board-game-hub/games";
+import { royalMessengerGame, ticTacToeGame } from "@board-game-hub/games";
 
 const registeredGames = new Map<string, GameModule<unknown, unknown, unknown>>([
+  [royalMessengerGame.id, royalMessengerGame],
   [ticTacToeGame.id, ticTacToeGame]
 ]);
 
