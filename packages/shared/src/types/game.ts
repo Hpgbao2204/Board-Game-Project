@@ -9,6 +9,7 @@ export interface GameModuleMetadata {
   minPlayers: number;
   maxPlayers: number;
   supportsTeams: boolean;
+  description?: string;
 }
 
 export type GameResult =

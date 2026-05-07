@@ -1,3 +1,4 @@
+export { GAME_CATALOG } from "./catalog";
 export type { GameContext, GameSeat } from "./GameContext";
 export type {
   GameEvent,
