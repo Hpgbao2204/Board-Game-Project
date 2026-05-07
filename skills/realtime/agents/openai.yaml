@@ -1,0 +1,4 @@
+interface:
+  display_name: "Realtime"
+  short_description: "Handle rooms, WebSocket sync, and reconnects"
+  default_prompt: "Design or implement realtime room sync for the board game hub."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Architect"
+  short_description: "Plan MVP scope and modular repo architecture"
+  default_prompt: "Design the MVP roadmap, folder structure, and architecture for this board game hub."

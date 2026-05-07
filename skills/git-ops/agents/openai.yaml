@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Ops"
+  short_description: "Keep commits small and docs useful"
+  default_prompt: "Prepare commits, README updates, and operational notes for the board game hub."

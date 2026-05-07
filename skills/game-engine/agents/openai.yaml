@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Engine"
+  short_description: "Define pluggable game contracts and turn logic"
+  default_prompt: "Design or implement a board game module using the shared game engine contract."

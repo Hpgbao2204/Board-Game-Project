@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend UI UX"
+  short_description: "Build clean React game hub screens"
+  default_prompt: "Build the lobby, room, or game board UI for the board game hub."
